@@ -14,7 +14,7 @@ services:
         depends_on:
             - redis
         networks:
-            - laravel-9
+            - turbomat
 
     # nginx
     nginx:
@@ -26,7 +26,7 @@ services:
             - ./:/var/www
             - ./docker/nginx/:/etc/nginx/conf.d/
         networks: 
-            - laravel-9
+            - turbomat
 
     # db mysql
     mysql:
@@ -42,7 +42,7 @@ services:
         ports:
             - "3307:3306"
         networks:
-            - laravel-9
+            - turbomat
 
     # queue
     queue:
@@ -55,14 +55,14 @@ services:
             - redis
             - app
         networks:
-            - laravel-9
+            - turbomat
 
     # redis
     redis:
         image: redis:latest
         networks:
-            - laravel-9
+            - turbomat
 
 networks:
-    laravel-9:
+    turbomat:
         driver: bridge

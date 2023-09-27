@@ -23,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+                // app('url')->forceRootUrl('http://nil-reis.sa-1.sharedwithexpose.com/');
+
         //
     }
 }

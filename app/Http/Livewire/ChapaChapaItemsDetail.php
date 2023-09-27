@@ -29,6 +29,9 @@ class ChapaChapaItemsDetail extends Component
         'chapaItem.comprimento' => ['required', 'max:255', 'string'],
     ];
 
+    protected $listeners = ['updated'];
+
+
     public function mount(Chapa $chapa): void
     {
         $this->chapa = $chapa;
@@ -66,6 +69,9 @@ class ChapaChapaItemsDetail extends Component
     {
         $this->resetErrorBag();
         $this->showingModal = true;
+
+        // Dispatch the event to set focus to the 'Largura' input
+        $this->dispatchBrowserEvent('focusLargura');
     }
 
     public function hideModal(): void
@@ -88,6 +94,8 @@ class ChapaChapaItemsDetail extends Component
         $this->chapaItem->save();
 
         $this->hideModal();
+
+        $this->newChapaItem();
     }
 
     public function destroySelected(): void
@@ -111,6 +119,19 @@ class ChapaChapaItemsDetail extends Component
 
         foreach ($this->chapa->chapaItems as $chapaItem) {
             array_push($this->selected, $chapaItem->id);
+        }
+    }
+    public function focusComprimento()
+    {
+        $this->dispatchBrowserEvent('focusComprimento');
+    }
+
+    public function updated($propertyName)
+    {
+        if ($propertyName === 'chapaItem.comprimento') {
+            // Aqui, você pode chamar o método para salvar o registro.
+            // Por exemplo:
+            $this->save();
         }
     }
 

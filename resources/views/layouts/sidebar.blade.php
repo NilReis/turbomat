@@ -3,7 +3,7 @@
     <!-- Brand Logo -->
     <a href="{{ url('/') }}" class="brand-link">
         <img src="https://vemto.app/favicon.png" alt="Vemto Logo" class="brand-image bg-white img-circle">
-        <span class="brand-text font-weight-light">teste04</span>
+        <span class="brand-text font-weight-light">Turbomat</span>
     </a>
 
     <!-- Sidebar -->

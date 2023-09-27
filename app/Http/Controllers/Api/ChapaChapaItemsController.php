@@ -30,6 +30,7 @@ class ChapaChapaItemsController extends Controller
         $this->authorize('create', ChapaItem::class);
 
         $validated = $request->validate([
+            'id' => ['required', 'max:255'],
             'largura' => ['required', 'max:255', 'string'],
             'comprimento' => ['required', 'max:255', 'string'],
         ]);

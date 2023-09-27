@@ -25,6 +25,7 @@ class ChapaChapaItemsDetail extends Component
     public $modalTitle = 'New ChapaItem';
 
     protected $rules = [
+        // 'chapaItem.id' => ['required', 'max:255'],
         'chapaItem.largura' => ['required', 'max:255', 'string'],
         'chapaItem.comprimento' => ['required', 'max:255', 'string'],
     ];

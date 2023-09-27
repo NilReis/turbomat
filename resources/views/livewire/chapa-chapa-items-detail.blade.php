@@ -59,6 +59,9 @@
                     <th>
                         <input type="checkbox" wire:model="allSelected" wire:click="toggleFullSelection" title="{{ trans('crud.common.select_all') }}" />
                     </th>
+                    <th class="text-right">
+                        @lang('crud.chapa_chapa_items.inputs.id')
+                    </th>
                     <th class="text-left">
                         @lang('crud.chapa_chapa_items.inputs.largura')
                     </th>
@@ -74,6 +77,7 @@
                     <td class="text-left">
                         <input type="checkbox" value="{{ $chapaItem->id }}" wire:model="selected" />
                     </td>
+                    <td class="text-right">{{ $chapaItem->id ?? '-' }}</td>
                     <td class="text-left">{{ $chapaItem->largura ?? '-' }}</td>
                     <td class="text-left">
                         {{ $chapaItem->comprimento ?? '-' }}
@@ -92,7 +96,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="3">{{ $chapaItems->render() }}</td>
+                    <td colspan="4">{{ $chapaItems->render() }}</td>
                 </tr>
             </tfoot>
         </table>

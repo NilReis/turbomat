@@ -42,6 +42,7 @@ return [
         'edit_title' => 'Edit ChapaItem',
         'show_title' => 'Show ChapaItem',
         'inputs' => [
+            'id' => 'Id',
             'largura' => 'Largura',
             'comprimento' => 'Comprimento',
         ],

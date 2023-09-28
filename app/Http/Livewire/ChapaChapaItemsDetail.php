@@ -84,6 +84,11 @@ class ChapaChapaItemsDetail extends Component
     {
         $this->validate();
 
+        // Convertendo e arredondando largura e comprimento
+        $this->chapaItem->largura =  $this->arredondar(floatval($this->chapaItem->largura));
+        $this->chapaItem->comprimento =  $this->arredondar(floatval($this->chapaItem->comprimento));
+
+
         if (!$this->chapaItem->chapa_id) {
             $this->authorize('create', ChapaItem::class);
 
@@ -134,6 +139,36 @@ class ChapaChapaItemsDetail extends Component
             // Por exemplo:
             $this->save();
         }
+    }
+
+    public function arredondar($numero)
+    {
+        // Convertendo a string para um float
+        $numero = floatval($numero);
+
+        // Primeiro, arredonde o número para o inteiro mais próximo
+        $numeroArredondado = round($numero);
+
+        // Então, modifique o número arredondado para terminar em 0 ou 5
+        $ultimoDigito = $numeroArredondado % 10;
+        if ($ultimoDigito >= 0 && $ultimoDigito < 5) {
+            return $numeroArredondado - $ultimoDigito;
+        } elseif ($ultimoDigito >= 5 && $ultimoDigito < 10) {
+            return $numeroArredondado - $ultimoDigito + 5;
+        }
+        return $numeroArredondado;
+    }
+
+    public function showAllDimensions(): void
+    {
+        $items = $this->chapa->chapaItems;
+        $dimensions = '';
+    
+        foreach ($items as $item) {
+            $dimensions .= "{$item->largura} mm x {$item->comprimento} mm; ";
+        }
+    
+        $this->dispatchBrowserEvent('show-dimensions', ['dimensions' => $dimensions]);
     }
 
     public function render(): View

@@ -11,6 +11,10 @@
             @lang('crud.common.delete_selected')
         </button>
         @endcan
+        <button class="btn btn-info" wire:click="showAllDimensions">
+            Mostrar Todas as Dimensões
+        </button>
+
     </div>
 
     <x-modal id="chapa-chapa-items-modal" wire:model="showingModal">
@@ -111,5 +115,9 @@
 
     window.addEventListener('focusComprimento', event => {
         document.querySelector('input[name="chapaItem.comprimento"]').focus();
+    });
+
+    window.addEventListener('show-dimensions', event => {
+        alert(event.detail.dimensions);
     });
 </script>

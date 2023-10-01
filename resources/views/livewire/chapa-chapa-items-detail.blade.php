@@ -14,6 +14,9 @@
         <button class="btn btn-info" wire:click="showAllDimensions">
             Mostrar Todas as Dimensões
         </button>
+        <button class="btn btn-secondary" wire:click="showItemsModal">
+            Mostrar Itens de Chapa
+        </button>
 
     </div>
 
@@ -56,6 +59,29 @@
         </div>
     </x-modal>
 
+    <x-modal id="items-modal" wire:model="showingItemsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Itens de Chapa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea wire:model="itemsText" class="form-control" rows="5"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" wire:click="$toggle('showingItemsModal')">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" wire:click="filterItems">
+                    Filtrar Itens
+                </button>
+            </div>
+        </div>
+    </x-modal>
+
+
     <div class="table-responsive">
         <table class="table table-borderless table-hover">
             <thead>
@@ -76,7 +102,13 @@
                 </tr>
             </thead>
             <tbody class="text-gray-600">
-                @foreach ($chapaItems as $chapaItem)
+
+                @php
+                
+                $itemsToDisplay = (is_array($filteredItems) || $filteredItems instanceof Countable) && count($filteredItems) > 0 ? $filteredItems : $chapaItems;
+
+                @endphp
+                @foreach ($itemsToDisplay as $chapaItem)
                 <tr class="hover:bg-gray-100">
                     <td class="text-left">
                         <input type="checkbox" value="{{ $chapaItem->id }}" wire:model="selected" />
@@ -106,6 +138,7 @@
         </table>
     </div>
 </div>
+
 <script>
     window.addEventListener('focusLargura', event => {
         setTimeout(() => {
@@ -119,5 +152,13 @@
 
     window.addEventListener('show-dimensions', event => {
         alert(event.detail.dimensions);
+    });
+
+    window.addEventListener('show-items-modal', event => {
+        $('#items-modal').modal('show');
+    });
+
+    window.addEventListener('closeItemsModal', event => {
+        $('#items-modal').modal('hide');
     });
 </script>

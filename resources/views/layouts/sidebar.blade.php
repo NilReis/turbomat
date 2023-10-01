@@ -27,7 +27,7 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon icon ion-md-apps"></i>
                         <p>
-                            Apps
+                            Panel Cut
                             <i class="nav-icon right icon ion-md-arrow-round-back"></i>
                         </p>
                     </a>
@@ -36,7 +36,13 @@
                             <li class="nav-item">
                                 <a href="{{ route('chapas.index') }}" class="nav-link">
                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Chapas</p>
+                                    <p>Materiais & Paineis</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('chapas.index') }}" class="nav-link">
+                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <p>Baixa de Paineis</p>
                                 </a>
                             </li>
                             @endcan

@@ -22,7 +22,14 @@ class ChapaChapaItemsDetail extends Component
     public $allSelected = false;
     public $showingModal = false;
 
+    public $showingItemsModal = false;
+    public $itemsText = '';
+
+
     public $modalTitle = 'New ChapaItem';
+
+    protected $filteredItemsObj;
+
 
     protected $rules = [
         // 'chapaItem.id' => ['required', 'max:255'],
@@ -163,18 +170,56 @@ class ChapaChapaItemsDetail extends Component
     {
         $items = $this->chapa->chapaItems;
         $dimensions = '';
-    
+
         foreach ($items as $item) {
             $dimensions .= "{$item->largura} mm x {$item->comprimento} mm; ";
         }
-    
+
         $this->dispatchBrowserEvent('show-dimensions', ['dimensions' => $dimensions]);
+    }
+
+
+
+    public function filterItems()
+    {
+        $lines = explode(PHP_EOL, $this->itemsText);
+        $ids = [];
+    
+        foreach ($lines as $line) {
+            $tabs = explode("\t", $line);
+    
+            if(isset($tabs[2]) && isset($tabs[3])) {
+                $largura  = intval($tabs[2]);
+                $comprimento = intval($tabs[3]);
+    
+                // Obtendo IDs dos itens que correspondem aos critérios
+                $ids[] = $this->chapa->chapaItems()->where('comprimento', $comprimento)
+                                  ->where('largura', $largura)
+                                  ->pluck('id');
+       
+            }
+        }
+        
+
+        $items = $this->chapa->chapaItems()->whereIn('id', $ids)->paginate(20);
+    
+        $this->filteredItemsObj= $items;
+        $this->dispatchBrowserEvent('closeItemsModal');
+    }
+    
+    
+    
+
+    public function showItemsModal()
+    {
+        $this->dispatchBrowserEvent('show-items-modal');
     }
 
     public function render(): View
     {
         return view('livewire.chapa-chapa-items-detail', [
             'chapaItems' => $this->chapa->chapaItems()->paginate(20),
+            'filteredItems' => $this->filteredItemsObj, // Adicione esta linha
         ]);
     }
 }

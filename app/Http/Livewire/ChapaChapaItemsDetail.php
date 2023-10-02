@@ -183,32 +183,40 @@ class ChapaChapaItemsDetail extends Component
     public function filterItems()
     {
         $lines = explode(PHP_EOL, $this->itemsText);
-        $ids = [];
-    
+        $ids = []; // Inicializando um array para armazenar os IDs dos itens filtrados
+
         foreach ($lines as $line) {
             $tabs = explode("\t", $line);
-    
-            if(isset($tabs[2]) && isset($tabs[3])) {
+
+            if (isset($tabs[2]) && isset($tabs[3])) {
                 $largura  = intval($tabs[2]);
                 $comprimento = intval($tabs[3]);
-    
+
                 // Obtendo IDs dos itens que correspondem aos critérios
-                $ids[] = $this->chapa->chapaItems()->where('comprimento', $comprimento)
-                                  ->where('largura', $largura)
-                                  ->pluck('id');
-       
+                $filteredIds = $this->chapa->chapaItems()->where('comprimento', $comprimento)
+                    ->where('largura', $largura)
+                    ->pluck('id')
+                    ->toArray(); // Convertendo a coleção para um array
+
+                // Adicionando os IDs dos itens filtrados ao array de IDs
+                $ids = array_merge($ids, $filteredIds);
             }
         }
-        
 
-        $items = $this->chapa->chapaItems()->whereIn('id', $ids)->paginate(20);
-    
-        $this->filteredItemsObj= $items;
-        $this->dispatchBrowserEvent('closeItemsModal');
+        if (!empty($ids)) {
+            $items = $this->chapa->chapaItems()->whereIn('id', $ids)->paginate(20);
+            $this->filteredItemsObj = $items; // Armazenando o objeto paginado
+            $this->selected = $ids; // Atualizando a propriedade $selected com os IDs dos itens filtrados
+            $this->dispatchBrowserEvent('closeItemsModal');
+        } else {
+            // Handle the case where no items were found
+        }
     }
-    
-    
-    
+
+
+
+
+
 
     public function showItemsModal()
     {

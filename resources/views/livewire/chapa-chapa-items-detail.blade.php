@@ -40,6 +40,10 @@
                         <x-inputs.text name="chapaItem.comprimento" label="Comprimento" wire:model.debounce.2000ms="chapaItem.comprimento" maxlength="255" placeholder="Comprimento"></x-inputs.text>
 
                     </x-inputs.group>
+                    <x-inputs.group class="col-sm-12">
+                        <x-inputs.text name="chapaItem.quantidade" label="Quantidade" wire:model.defer="chapaItem.quantidade" maxlength="255" placeholder="Quantidade">
+                        </x-inputs.text>
+                    </x-inputs.group>
                 </div>
             </div>
 
@@ -98,13 +102,16 @@
                     <th class="text-left">
                         @lang('crud.chapa_chapa_items.inputs.comprimento')
                     </th>
+                    <th class="text-left">
+                        Quantidade
+                    </th>
                     <th></th>
                 </tr>
             </thead>
             <tbody class="text-gray-600">
 
                 @php
-                
+
                 $itemsToDisplay = (is_array($filteredItems) || $filteredItems instanceof Countable) && count($filteredItems) > 0 ? $filteredItems : $chapaItems;
 
                 @endphp
@@ -117,6 +124,9 @@
                     <td class="text-left">{{ $chapaItem->largura ?? '-' }}</td>
                     <td class="text-left">
                         {{ $chapaItem->comprimento ?? '-' }}
+                    </td>
+                    <td class="text-left">
+                        {{ $chapaItem->quantidade ?? '-' }}
                     </td>
                     <td class="text-right" style="width: 134px;">
                         <div role="group" aria-label="Row Actions" class="relative inline-flex align-middle">

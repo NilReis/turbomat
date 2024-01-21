@@ -24,6 +24,8 @@ class ChapaChapaItemsDetail extends Component
 
     public $showingItemsModal = false;
     public $itemsText = '';
+    public $quantidade = 1;
+
 
 
     public $modalTitle = 'New ChapaItem';
@@ -35,6 +37,8 @@ class ChapaChapaItemsDetail extends Component
         // 'chapaItem.id' => ['required', 'max:255'],
         'chapaItem.largura' => ['required', 'max:255', 'string'],
         'chapaItem.comprimento' => ['required', 'max:255', 'string'],
+        'chapaItem.quantidade' => 'required|numeric|min:0', // Exemplo de regra
+
     ];
 
     protected $listeners = ['updated'];
@@ -43,12 +47,16 @@ class ChapaChapaItemsDetail extends Component
     public function mount(Chapa $chapa): void
     {
         $this->chapa = $chapa;
-        $this->resetChapaItemData();
+        // Esta linha deve garantir que o novo ChapaItem tenha a quantidade padrão.
+        $this->chapaItem = new ChapaItem(['quantidade' => $this->quantidade]);
+
+    
+    
+        // $this->resetChapaItemData();
     }
 
     public function resetChapaItemData(): void
     {
-        $this->chapaItem = new ChapaItem();
 
         $this->dispatchBrowserEvent('refresh');
     }
@@ -57,8 +65,9 @@ class ChapaChapaItemsDetail extends Component
     {
         $this->editing = false;
         $this->modalTitle = trans('crud.chapa_chapa_items.new_title');
-        $this->resetChapaItemData();
-
+        // Quando criar um novo ChapaItem, defina a quantidade para o valor padrão.
+        $this->chapaItem = new ChapaItem(['quantidade' => $this->quantidade]);
+    
         $this->showModal();
     }
 
@@ -77,6 +86,7 @@ class ChapaChapaItemsDetail extends Component
     {
         $this->resetErrorBag();
         $this->showingModal = true;
+
 
         // Dispatch the event to set focus to the 'Largura' input
         $this->dispatchBrowserEvent('focusLargura');
@@ -172,7 +182,7 @@ class ChapaChapaItemsDetail extends Component
         $dimensions = '';
 
         foreach ($items as $item) {
-            $dimensions .= "{$item->largura} mm x {$item->comprimento} mm; ";
+            $dimensions .= "{$item->largura} mm x {$item->comprimento} mm x {$item->quantidade} ; ";
         }
 
         $this->dispatchBrowserEvent('show-dimensions', ['dimensions' => $dimensions]);

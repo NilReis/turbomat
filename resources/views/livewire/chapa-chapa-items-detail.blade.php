@@ -172,3 +172,28 @@
         $('#items-modal').modal('hide');
     });
 </script>
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+<link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css">
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simula o disparo do evento 'print-label' com dados de teste
+        Livewire.emit('print-label', {
+            largura: 10,
+            comprimento: 20,
+            quantidade: 1
+        });
+
+        Livewire.on('print-label', data => {
+            console.log('Dados recebidos para impressão:', data);
+
+            // Verifica se o conteúdo a ser impresso foi adicionado ao DOM
+            const printableExists = document.getElementById('printable') !== null;
+            console.log('Conteúdo para impressão existe no DOM:', printableExists);
+
+            // Aqui você pode adicionar a lógica para invocar a função de impressão, se necessário
+            // Por exemplo, chamar printJS() ou outra função dependendo da sua implementação
+        });
+    });
+</script>

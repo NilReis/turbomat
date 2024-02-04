@@ -113,12 +113,15 @@ class ChapaChapaItemsDetail extends Component
         } else {
             $this->authorize('update', $this->chapaItem);
         }
+        $this->dispatchBrowserEvent('print-label', ['largura' => $this->chapaItem->largura, 'comprimento' => $this->chapaItem->comprimento, 'quantidade' => $this->chapaItem->quantidade]);
 
         $this->chapaItem->save();
+
 
         $this->hideModal();
 
         $this->newChapaItem();
+
     }
 
     public function destroySelected(): void

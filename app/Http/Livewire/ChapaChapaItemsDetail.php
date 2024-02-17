@@ -8,6 +8,9 @@ use Illuminate\View\View;
 use App\Models\ChapaItem;
 use Livewire\WithPagination;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Exception; // Isso importa a classe Exception global para o arquivo.
 
 class ChapaChapaItemsDetail extends Component
 {
@@ -25,6 +28,8 @@ class ChapaChapaItemsDetail extends Component
     public $showingItemsModal = false;
     public $itemsText = '';
     public $quantidade = 1;
+    public $currentItemId;
+
 
 
 
@@ -50,8 +55,8 @@ class ChapaChapaItemsDetail extends Component
         // Esta linha deve garantir que o novo ChapaItem tenha a quantidade padrão.
         $this->chapaItem = new ChapaItem(['quantidade' => $this->quantidade]);
 
-    
-    
+
+
         // $this->resetChapaItemData();
     }
 
@@ -67,12 +72,15 @@ class ChapaChapaItemsDetail extends Component
         $this->modalTitle = trans('crud.chapa_chapa_items.new_title');
         // Quando criar um novo ChapaItem, defina a quantidade para o valor padrão.
         $this->chapaItem = new ChapaItem(['quantidade' => $this->quantidade]);
-    
+        $this->currentItemId = ChapaItem::max('id') + 1;
+
+
         $this->showModal();
     }
 
     public function editChapaItem(ChapaItem $chapaItem): void
     {
+        $this->currentItemId = $chapaItem->id;
         $this->editing = true;
         $this->modalTitle = trans('crud.chapa_chapa_items.edit_title');
         $this->chapaItem = $chapaItem;
@@ -101,11 +109,21 @@ class ChapaChapaItemsDetail extends Component
     {
         $this->validate();
 
-        // Convertendo e arredondando largura e comprimento
-        $this->chapaItem->largura =  $this->arredondar(floatval($this->chapaItem->largura));
-        $this->chapaItem->comprimento =  $this->arredondar(floatval($this->chapaItem->comprimento));
+        // Preparar os dados para impressão
+        $data = [
+            'largura' => $this->chapaItem->largura,
+            'comprimento' => $this->chapaItem->comprimento,
+            'quantidade' => $this->chapaItem->quantidade,
+        ];
+
+        // Disparar o evento para exibir e imprimir os detalhes antes de salvar
+        // $this->dispatchBrowserEvent('print-label', $data);
+
+        // Aqui, você pode opcionalmente adicionar um delay ou esperar por uma confirmação do usuário
+        // Isso dependerá de como você deseja gerenciar o fluxo de impressão vs. salvamento
 
 
+        // Salvamento dos dados
         if (!$this->chapaItem->chapa_id) {
             $this->authorize('create', ChapaItem::class);
 
@@ -113,16 +131,24 @@ class ChapaChapaItemsDetail extends Component
         } else {
             $this->authorize('update', $this->chapaItem);
         }
-        $this->dispatchBrowserEvent('print-label', ['largura' => $this->chapaItem->largura, 'comprimento' => $this->chapaItem->comprimento, 'quantidade' => $this->chapaItem->quantidade]);
 
         $this->chapaItem->save();
 
-
+        // Outras ações pós-salvamento
         $this->hideModal();
-
         $this->newChapaItem();
-
     }
+
+    public function displayLabel()
+    {
+        $data = [
+            'largura' => $this->chapaItem->largura,
+            'comprimento' => $this->chapaItem->comprimento,
+            'quantidade' => $this->chapaItem->quantidade,
+        ];
+        $this->dispatchBrowserEvent('print-label', $data);
+    }
+
 
     public function destroySelected(): void
     {

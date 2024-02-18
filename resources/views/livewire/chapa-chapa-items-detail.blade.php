@@ -17,7 +17,10 @@
         <button class="btn btn-secondary" wire:click="showItemsModal">
             Mostrar Itens de Chapa
         </button>
-        <button wire:click="displayLabel">Exibir Etiqueta</button>
+        <button class="btn btn-success" wire:click="generateDimensionsFile">
+            Gerar Arquivo de Dimensões
+        </button>
+
 
 
     </div>
@@ -240,6 +243,14 @@
 
         head.appendChild(style);
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('file-generated', event => {
+            const fileName = event.detail.filePath;
+            const downloadUrl = `/storage/${fileName}`;
+            window.open(downloadUrl, '_blank');
+        });
+    });
 </script>
 <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
 <link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css">

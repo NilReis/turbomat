@@ -255,7 +255,23 @@ class ChapaChapaItemsDetail extends Component
 
 
 
-
+    public function generateDimensionsFile()
+    {
+        $items = $this->chapa->chapaItems;
+        $dimensionsText = '';
+    
+        foreach ($items as $item) {
+            $dimensionsText .= "Largura: {$item->largura} mm, Comprimento: {$item->comprimento} mm, Quantidade: {$item->quantidade}\n";
+        }
+    
+        $fileName = 'dimensions.txt';
+        $filePath = storage_path('app/public/' . $fileName);
+    
+        file_put_contents($filePath, $dimensionsText);
+    
+        $this->dispatchBrowserEvent('file-generated', ['filePath' => $fileName]);
+    }
+    
 
     public function showItemsModal()
     {

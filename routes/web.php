@@ -34,6 +34,7 @@ Route::prefix('/')
     ->middleware('auth')
     ->group(function () {
         Route::resource('chapas', ChapaController::class);
+        Route::resource('chapa-items', ChapaItemController::class);
     });
 
 

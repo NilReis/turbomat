@@ -22,7 +22,7 @@ class ChapaController extends Controller
 
         $chapas = Chapa::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(30)
             ->withQueryString();
 
         return view('app.chapas.index', compact('chapas', 'search'));

@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ChapaController;
+use App\Http\Controllers\ChapaItemController;
+use App\Http\Controllers\ReservedItemController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +21,10 @@ use App\Http\Controllers\ChapaController;
 Route::get('/', function () {
     return view('welcome');
 });
+// Dentro do arquivo web.php
+Route::get('/chapa-items/search', [ChapaItemController::class, 'search'])->name('chapaItems.search');
+Route::resource('chapas/itens-reservados', ReservedItemController::class)->names('chapas.itens-reservados');
+Route::resource('reserved-items', ReservedItemController::class);
 
 Auth::routes();
 
@@ -28,3 +35,6 @@ Route::prefix('/')
     ->group(function () {
         Route::resource('chapas', ChapaController::class);
     });
+
+
+

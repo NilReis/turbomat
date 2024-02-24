@@ -66,21 +66,18 @@
     <x-modal id="items-modal" wire:model="showingItemsModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Itens de Chapa</h5>
+                <h5 class="modal-title">Reservar Itens de Chapa</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <textarea wire:model="itemsText" class="form-control" rows="5"></textarea>
+                <input type="text" wire:model="reservedItemName" class="form-control mb-3" placeholder="Nome da Reserva">
+                <textarea wire:model="itemsText" class="form-control" rows="5" placeholder="Insira os detalhes dos itens aqui..."></textarea>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" wire:click="$toggle('showingItemsModal')">
-                    Cancelar
-                </button>
-                <button type="button" class="btn btn-primary" wire:click="filterItems">
-                    Filtrar Itens
-                </button>
+                <button type="button" class="btn btn-light" wire:click="$toggle('showingItemsModal')">Cancelar</button>
+                <button type="button" class="btn btn-primary" wire:click="reserveItems">Reservar Itens</button>
             </div>
         </div>
     </x-modal>

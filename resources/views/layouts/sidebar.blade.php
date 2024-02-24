@@ -32,20 +32,34 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                            @can('view-any', App\Models\Chapa::class)
-                            <li class="nav-item">
-                                <a href="{{ route('chapas.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Materiais & Paineis</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('chapas.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Baixa de Paineis</p>
-                                </a>
-                            </li>
-                            @endcan
+                        @can('view-any', App\Models\Chapa::class)
+                        <li class="nav-item">
+                            <a href="{{ route('chapas.index') }}" class="nav-link">
+                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                <p>Materiais & Paineis</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('chapas.index') }}" class="nav-link">
+                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                <p>Baixa de Paineis</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('chapa-items.index') }}" class="nav-link">
+                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                <p>Pesquisar itens</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('chapas.itens-reservados.index') }}" class="nav-link">
+                                <i class="nav-icon icon ion-md-bookmarks"></i> {{-- Escolha um ícone apropriado para representar itens reservados --}}
+                                <p>Itens Reservados</p>
+                            </a>
+                        </li>
+
+
+                        @endcan
                     </ul>
                 </li>
 

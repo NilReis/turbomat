@@ -25,6 +25,9 @@ class ChapaChapaItemsDetail extends Component
     public $showingItemsModal = false;
     public $itemsText = '';
     public $quantidade = 1;
+    public $currentItemId;
+    public $reservedItemName;
+
 
 
 
@@ -192,40 +195,112 @@ class ChapaChapaItemsDetail extends Component
 
     public function filterItems()
     {
+        // Obter todos os registros de chapaItems antes de processar as linhas
+        $TodosRegistros = $this->chapa->chapaItems()->get();
+    
         $lines = explode(PHP_EOL, $this->itemsText);
-        $ids = []; // Inicializando um array para armazenar os IDs dos itens filtrados
-
+        $foundIds = []; // Inicializando um array para armazenar os IDs encontrados
+    
         foreach ($lines as $line) {
             $tabs = explode("\t", $line);
-
-            if (isset($tabs[2]) && isset($tabs[3])) {
-                $largura  = intval($tabs[2]);
+            if (isset($tabs[1]) && isset($tabs[2]) && isset($tabs[3])) {
+                $quantidade = intval($tabs[1]);
+                $largura = intval($tabs[2]);
                 $comprimento = intval($tabs[3]);
-
-                // Obtendo IDs dos itens que correspondem aos critérios
-                $filteredIds = $this->chapa->chapaItems()->where('comprimento', $comprimento)
-                    ->where('largura', $largura)
-                    ->pluck('id')
-                    ->toArray(); // Convertendo a coleção para um array
-
-                // Adicionando os IDs dos itens filtrados ao array de IDs
-                $ids = array_merge($ids, $filteredIds);
+    
+                for ($i = 0; $i < $quantidade; $i++) { // Loop baseado na quantidade especificada
+                    foreach ($TodosRegistros as $key => $registro) {
+                        if ($registro->comprimento == $comprimento && $registro->largura == $largura) {
+                            $foundIds[] = $registro->id;
+                            unset($TodosRegistros[$key]); // Removendo o item da coleção
+                            break; // Saindo do loop após encontrar e remover o item correspondente
+                        }
+                    }
+                }
             }
         }
+    
+        // Reindexando a coleção após modificações
+        $TodosRegistros = collect($TodosRegistros)->values();
+    
+        // Processamento adicional...
+        $ids = array_unique($foundIds); // Removendo duplicatas
 
+    
         if (!empty($ids)) {
-            $items = $this->chapa->chapaItems()->whereIn('id', $ids)->paginate(20);
-            $this->filteredItemsObj = $items; // Armazenando o objeto paginado
+            $this->filteredItemsObj = $this->chapa->chapaItems()->whereIn('id', $ids)->get();
             $this->selected = $ids; // Atualizando a propriedade $selected com os IDs dos itens filtrados
             $this->dispatchBrowserEvent('closeItemsModal');
         } else {
-            // Handle the case where no items were found
+            // Trate o caso em que nenhum item foi encontrado
         }
+    }
+    
+
+    public function reserveItems()
+    {
+        $this->validate([
+            'reservedItemName' => 'required|string|max:255',
+            'itemsText' => 'required|string'
+        ]);
+    
+        // Criar o registro em reserved_items
+        $reservedItem = \App\Models\ReservedItem::create([
+            'nome' => $this->reservedItemName,
+            // Adicione quaisquer outros campos necessários aqui
+        ]);
+    
+        $lines = explode(PHP_EOL, $this->itemsText);
+        $TodosRegistros = $this->chapa->chapaItems()->get();
+        $foundIds = [];
+    
+        foreach ($lines as $line) {
+            $tabs = explode("\t", $line);
+            if (isset($tabs[1]) && isset($tabs[2]) && isset($tabs[3])) {
+                $quantidade = intval($tabs[1]);
+                $largura = intval($tabs[2]);
+                $comprimento = intval($tabs[3]);
+    
+                for ($i = 0; $i < $quantidade; $i++) { // Loop baseado na quantidade especificada
+                    foreach ($TodosRegistros as $key => $registro) {
+                        if ($registro->comprimento == $comprimento && $registro->largura == $largura) {
+                            $foundIds[] = $registro->id;
+                            unset($TodosRegistros[$key]); // Removendo o item da coleção para evitar duplicatas
+    
+                            $registro1 = ChapaItem::find($registro->id);
+                            if ($registro1) {
+                                $registro1->reserved_item_id = $reservedItem->id;
+                                $registro1->save();
+                            }
+                            break; // Saindo do loop após encontrar e marcar o item correspondente
+                        }
+                    }
+                }
+            }
+        }
+    
+        // Fechar modal, limpar campos e atualizar a view conforme necessário
+        $this->reset(['showingItemsModal', 'reservedItemName', 'itemsText']);
+        // $this->emit('refreshItemsList'); // Se você precisar atualizar a lista de itens na view após a reserva
     }
 
 
+    public function generateDimensionsFile()
+    {
+        $items = $this->chapa->chapaItems;
+        $dimensionsText = '';
 
+        foreach ($items as $item) {
+            $dimensionsText .= "{$item->largura} mm X {$item->comprimento} mm X {$item->quantidade};\n";
+        }
 
+        $fileName = 'dimensions.txt';
+        $filePath = storage_path('app/public/' . $fileName);
+
+        file_put_contents($filePath, $dimensionsText);
+
+        $this->dispatchBrowserEvent('file-generated', ['filePath' => $fileName]);
+    }
 
 
     public function showItemsModal()

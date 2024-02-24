@@ -22,4 +22,10 @@ class ChapaItem extends Model
     {
         return $this->belongsTo(Chapa::class);
     }
+
+        // Definindo o relacionamento inverso com ReservedItem
+        public function reservedItem()
+        {
+            return $this->belongsTo(ReservedItem::class);
+        }
 }

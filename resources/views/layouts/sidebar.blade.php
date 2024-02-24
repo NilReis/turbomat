@@ -45,6 +45,12 @@
                                     <p>Baixa de Paineis</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('chapa-items.index') }}" class="nav-link">
+                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <p>Pesquisar itens</p>
+                                </a>
+                            </li>
                             @endcan
                     </ul>
                 </li>

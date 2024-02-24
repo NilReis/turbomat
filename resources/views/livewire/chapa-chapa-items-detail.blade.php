@@ -17,6 +17,11 @@
         <button class="btn btn-secondary" wire:click="showItemsModal">
             Mostrar Itens de Chapa
         </button>
+        <button class="btn btn-success" wire:click="generateDimensionsFile">
+            Gerar Arquivo de Dimensões
+        </button>
+
+
 
     </div>
 
@@ -44,6 +49,11 @@
                         <x-inputs.text name="chapaItem.quantidade" label="Quantidade" wire:model.defer="chapaItem.quantidade" maxlength="255" placeholder="Quantidade">
                         </x-inputs.text>
                     </x-inputs.group>
+                    <x-inputs.group class="col-sm-12">
+                        <x-inputs.text name="currentItemId" label="ID Atual" wire:model.defer="currentItemId" maxlength="255" placeholder="ID" readonly>
+                        </x-inputs.text>
+                    </x-inputs.group>
+
                 </div>
             </div>
 
@@ -61,6 +71,15 @@
                 </button>
             </div>
         </div>
+        <!-- Conteúdo invisível para impressão -->
+        <div id="printableArea" style="display:none;">
+            <div style="font-family: 'Arial', sans-serif; font-size: 10px;">
+                Largura: <span id="printLargura">--</span> mm<br>
+                <!-- Comprimento: <span id="printComprimento">--</span> mm<br>
+                Quantidade: <span id="printQuantidade">--</span><br> -->
+            </div>
+        </div>
+
     </x-modal>
 
     <x-modal id="items-modal" wire:model="showingItemsModal">
@@ -147,6 +166,10 @@
             </tfoot>
         </table>
     </div>
+
+    <div wire:dispatch="print-label" wire:print-label="data => console.log('Dados recebidos para impressão:', data)">
+        <!-- Your HTML content here -->
+    </div>
 </div>
 
 <script>
@@ -172,3 +195,62 @@
         $('#items-modal').modal('hide');
     });
 </script>
+
+
+<script>
+    window.addEventListener('print-label', event => {
+        ajustarMargensDeImpressaoDiferentes();
+
+        const data = event.detail;
+
+        // Atualizar o conteúdo do HTML com os dados recebidos
+        document.getElementById('printLargura').textContent = data.largura ?? 'N/A';
+        // document.getElementById('printComprimento').textContent = data.comprimento ?? 'N/A';
+        // document.getElementById('printQuantidade').textContent = data.quantidade ?? 'N/A';
+
+        // Exibir o elemento printableArea antes de imprimir
+        document.getElementById('printableArea').style.display = 'block';
+
+
+        // Chamar printJS passando o ID do elemento HTML
+        printJS({
+            printable: 'printableArea',
+            type: 'html',
+            scanStyles: false // Desativar a leitura de estilos internos se necessário
+        });
+    });
+
+    function ajustarMargensDeImpressaoDiferentes() {
+        var css = `@media print {
+                @page {
+                  margin-top: 1cm; /* Margem superior */
+                  margin-bottom: 2cm; /* Margem inferior */
+                  margin-left: 3cm; /* Margem esquerda */
+                  margin-right: 4cm; /* Margem direita */
+                }
+             }`,
+            head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style');
+
+        style.type = 'text/css';
+        style.media = 'print';
+
+        if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
+
+        head.appendChild(style);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('file-generated', event => {
+            const fileName = event.detail.filePath;
+            const downloadUrl = `/storage/${fileName}`;
+            window.open(downloadUrl, '_blank');
+        });
+    });
+</script>
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+<link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css">

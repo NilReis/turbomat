@@ -26,61 +26,83 @@
     </div>
 
     <x-modal id="chapa-chapa-items-modal" wire:model="showingModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ $modalTitle }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <div>
-                    <x-inputs.group class="col-sm-12">
-                        <x-inputs.text name="chapaItem.largura" label="Largura" wire:model="chapaItem.largura" maxlength="255" placeholder="Largura" wire:keydown.debounce.2000ms="focusComprimento"></x-inputs.text>
-
-                    </x-inputs.group>
-
-                    <x-inputs.group class="col-sm-12">
-                        <x-inputs.text name="chapaItem.comprimento" label="Comprimento" wire:model.debounce.2000ms="chapaItem.comprimento" maxlength="255" placeholder="Comprimento"></x-inputs.text>
-
-                    </x-inputs.group>
-                    <x-inputs.group class="col-sm-12">
-                        <x-inputs.text name="chapaItem.quantidade" label="Quantidade" wire:model.defer="chapaItem.quantidade" maxlength="255" placeholder="Quantidade">
-                        </x-inputs.text>
-                    </x-inputs.group>
-                    <x-inputs.group class="col-sm-12">
-                        <x-inputs.text name="currentItemId" label="ID Atual" wire:model.defer="currentItemId" maxlength="255" placeholder="ID" readonly>
-                        </x-inputs.text>
-                    </x-inputs.group>
-
-                </div>
-            </div>
-
-            @if($editing) @endif
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light float-left" wire:click="$toggle('showingModal')">
-                    <i class="icon ion-md-close"></i>
-                    @lang('crud.common.cancel')
-                </button>
-
-                <button type="button" class="btn btn-primary" wire:click="save">
-                    <i class="icon ion-md-save"></i>
-                    @lang('crud.common.save')
-                </button>
-            </div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{ $modalTitle }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
         </div>
-        <!-- Conteúdo invisível para impressão -->
-        <div id="printableArea" style="display:none;">
-            <div style="font-family: 'Arial', sans-serif; font-size: 10px;">
-                Largura: <span id="printLargura">--</span> mm<br>
-                <!-- Comprimento: <span id="printComprimento">--</span> mm<br>
-                Quantidade: <span id="printQuantidade">--</span><br> -->
+
+        <div class="modal-body">
+            <div>
+                <x-inputs.group class="col-sm-12">
+                    <x-inputs.text name="chapaItem.sequencial" label="Sequencial" wire:model="chapaItem.sequencial" maxlength="255" placeholder="Sequencial" x-on:focus="startSpeechRecognition('sequencial')"></x-inputs.text>
+                </x-inputs.group>
+
+                <x-inputs.group class="col-sm-12">
+                    <label for="largura">Largura</label>
+                    <x-inputs.text id="largura" name="chapaItem.largura" wire:model="chapaItem.largura" maxlength="255" placeholder="Largura" x-on:focus="startSpeechRecognition('largura')"></x-inputs.text>
+                </x-inputs.group>
+
+                <x-inputs.group class="col-sm-12">
+                    <label for="comprimento">Comprimento</label>
+                    <x-inputs.text id="comprimento" name="chapaItem.comprimento" wire:model="chapaItem.comprimento" maxlength="255" placeholder="Comprimento" x-on:focus="startSpeechRecognition('comprimento')"></x-inputs.text>
+                </x-inputs.group>
+
+                <x-inputs.group class="col-sm-12">
+                    <label for="quantidade">Quantidade</label>
+                    <x-inputs.text id="quantidade" name="chapaItem.quantidade" wire:model.defer="chapaItem.quantidade" maxlength="255" placeholder="Quantidade" x-on:focus="startSpeechRecognition('quantidade')"></x-inputs.text>
+                </x-inputs.group>
+
+                <x-inputs.group class="col-sm-12">
+                    <x-inputs.text name="currentItemId" label="ID Atual" wire:model.defer="currentItemId" maxlength="255" placeholder="ID" readonly>
+                    </x-inputs.text>
+                </x-inputs.group>
             </div>
         </div>
 
-    </x-modal>
+        @if($editing) @endif
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light float-left" wire:click="$toggle('showingModal')">
+                <i class="icon ion-md-close"></i>
+                @lang('crud.common.cancel')
+            </button>
+
+            <button type="button" class="btn btn-primary" wire:click="save">
+                <i class="icon ion-md-save"></i>
+                @lang('crud.common.save')
+            </button>
+        </div>
+    </div>
+    <!-- Conteúdo invisível para impressão -->
+    <div id="printableArea" style="display:none;">
+        <div style="font-family: 'Arial', sans-serif; font-size: 10px;">
+            Largura: <span id="printLargura">--</span> mm<br>
+            <!-- Comprimento: <span id="printComprimento">--</span> mm<br>
+            Quantidade: <span id="printQuantidade">--</span><br> -->
+        </div>
+    </div>
+
+    <script>
+        function startSpeechRecognition(inputId) {
+            // Lógica para iniciar o reconhecimento de fala quando o campo receber foco
+            const recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+            recognition.lang = 'pt-BR';
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById(inputId).value = transcript;
+                // Dispara um evento para o Livewire atualizar o modelo
+                const inputEvent = new Event('input', { bubbles: true });
+                document.getElementById(inputId).dispatchEvent(inputEvent);
+            };
+
+            recognition.start();
+        }
+    </script>
+</x-modal>
 
     <x-modal id="items-modal" wire:model="showingItemsModal">
         <div class="modal-content">
@@ -110,6 +132,9 @@
                         <input type="checkbox" wire:model="allSelected" wire:click="toggleFullSelection" title="{{ trans('crud.common.select_all') }}" />
                     </th>
                     <th class="text-right">
+                        @lang('crud.chapa_chapa_items.inputs.sequencial')
+                    </th>
+                    <th class="text-right">
                         @lang('crud.chapa_chapa_items.inputs.id')
                     </th>
                     <th class="text-left">
@@ -137,6 +162,8 @@
                         <input type="checkbox" value="{{ $chapaItem->id }}" wire:model="selected" />
                     </td>
                     <td class="text-right">{{ $chapaItem->id ?? '-' }}</td>
+
+                    <td class="text-right">{{ $chapaItem->sequencial ?? '-' }}</td>
                     <td class="text-left">{{ $chapaItem->largura ?? '-' }}</td>
                     <td class="text-left">
                         {{ $chapaItem->comprimento ?? '-' }}
@@ -172,7 +199,7 @@
 <script>
     window.addEventListener('focusLargura', event => {
         setTimeout(() => {
-            document.querySelector('input[name="chapaItem.largura"]').focus();
+            document.querySelector('input[name="chapaItem.sequencial"]').focus();
         }, 500); // delay of 500ms
     });
 

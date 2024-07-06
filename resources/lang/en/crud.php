@@ -45,6 +45,8 @@ return [
             'id' => 'Id',
             'largura' => 'Largura',
             'comprimento' => 'Comprimento',
+            'sequencial' => 'Sequencial',
+
         ],
     ],
 ];

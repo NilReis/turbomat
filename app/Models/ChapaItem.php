@@ -11,7 +11,7 @@ class ChapaItem extends Model
     use HasFactory;
     use Searchable;
 
-    protected $fillable = ['largura', 'comprimento', 'chapa_id', 'quantidade'];
+    protected $fillable = ['largura', 'comprimento', 'chapa_id', 'quantidade', 'sequencial'];
 
 
     protected $searchableFields = ['*'];

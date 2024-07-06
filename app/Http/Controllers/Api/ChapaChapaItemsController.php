@@ -31,6 +31,7 @@ class ChapaChapaItemsController extends Controller
 
         $validated = $request->validate([
             'id' => ['required', 'max:255'],
+            'sequencial' => ['required', 'max:255', 'string'],
             'largura' => ['required', 'max:255', 'string'],
             'comprimento' => ['required', 'max:255', 'string'],
         ]);

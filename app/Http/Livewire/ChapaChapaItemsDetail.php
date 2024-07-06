@@ -41,6 +41,7 @@ class ChapaChapaItemsDetail extends Component
 
     protected $rules = [
         // 'chapaItem.id' => ['required', 'max:255'],
+        'chapaItem.sequencial' => ['required', 'max:255', 'string'],
         'chapaItem.largura' => ['required', 'max:255', 'string'],
         'chapaItem.comprimento' => ['required', 'max:255', 'string'],
         'chapaItem.quantidade' => 'required|numeric|min:0', // Exemplo de regra
@@ -181,11 +182,11 @@ class ChapaChapaItemsDetail extends Component
 
     public function updated($propertyName)
     {
-        if ($propertyName === 'chapaItem.comprimento') {
-            // Aqui, você pode chamar o método para salvar o registro.
-            // Por exemplo:
-            $this->save();
-        }
+        // if ($propertyName === 'chapaItem.comprimento') {
+        //     // Aqui, você pode chamar o método para salvar o registro.
+        //     // Por exemplo:
+        //     $this->save();
+        // }
     }
 
     public function arredondar($numero)
